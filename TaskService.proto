@@ -1,0 +1,10 @@
+syntax = "proto3";
+import "TaskCommon.proto";
+import "TaskMetadata.proto";
+
+service TaskService {
+    rpc AddTask(TaskMetadata) returns (TaskReceived) {}
+    rpc AddArgument(stream TaskArgument) returns (Status) {}
+    rpc ExecTask(ExecTaskRequest) returns (Status) {}
+    rpc PollTask(ExecTaskRequest) returns (TaskResponse) {}
+}
