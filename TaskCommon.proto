@@ -1,0 +1,10 @@
+syntax = "proto3";
+enum StatusCode {
+    OK = 0;
+    ERROR = 1; 
+}
+ 
+message Status {
+    StatusCode status = 1;
+    string message = 2;
+}
