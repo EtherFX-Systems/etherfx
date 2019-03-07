@@ -1,5 +1,5 @@
 from driver import Driver
-from daemon import Daemon
+# from daemon import Daemon
 import pika
 import json
 import logging
@@ -34,6 +34,8 @@ class Subscriber():
     def callback(self, ch, method, properties, body):
         task_meta = json.loads(body)
         task_id = task_meta["task_id"]
+        
+        # print(task_id)
         # daemon.retrieveDataFromGDS(task_id)  -- cannot do this need to figure this out
         # daemon = Daemon()
         # daemon_runner = runner.DaemonRunner(daemon)
@@ -43,3 +45,4 @@ class Subscriber():
 if __name__ == "__main__":
     subscriber = Subscriber(Driver())
     subscriber.create_channel()
+    
