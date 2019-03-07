@@ -2,9 +2,9 @@ from daemon import runner
 import dill
 import importlib
 import time
-import etherfx-core
+import core
 
-class App():
+class Daemon():
     def __init__(self):
         self.stdin_path = '/dev/null'
         self.stdout_path = '/dev/tty'
@@ -22,7 +22,7 @@ class App():
         exec(function)
 
     def retrieveDataFromGDS(taskId):
-        etherfx-core.datastore.getTask()
+        core.datastore.getTask()
         # return path, klass, function, args
         # propFunction
 
@@ -40,8 +40,8 @@ class App():
         function = importlib.import_module(module, function)
 
 def main():
-    app = App()
-    daemon_runner = runner.DaemonRunner(app)
+    daemon = Daemon()
+    daemon_runner = runner.DaemonRunner(daemon)
     daemon_runner.do_action()
     exit()
 

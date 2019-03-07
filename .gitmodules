@@ -1,3 +1,3 @@
-[submodule "etherfx-core"]
-	path = etherfx-core
-	url = https://github.com/EtherFx-Systems/etherfx-core
+[submodule "core"]
+	path = core
+	url = https://github.com/EtherFx-Systems/etherfx-core.git
