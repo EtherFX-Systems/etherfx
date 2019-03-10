@@ -1,4 +1,3 @@
-from driver import Driver
 import pika
 import json
 import logging

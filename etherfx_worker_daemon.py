@@ -3,17 +3,18 @@ import daemon
 import dill
 import importlib
 import lockfile
+import os
+import sys
 import time
-
 
 class DaemonApp:
     def run(self):
         while True:
-            pollRabbitMQ()
+            poll_rabbit()
 
     def perform_task(TaskId):
-        data = retrieveDataFromGDS(taskId)
-        function = propfunction(data)
+        data = retrieve_data_from_gds(taskId)
+        function = prop_function(data)
         exec(function)
 
     def retrieve_data_from_GDS(taskId):
@@ -24,9 +25,9 @@ class DaemonApp:
     def prop_function(path, klass, function, args):
         """Constructs a python function"""
         if function is None:
-            libraryFunction(path, klass, function, args)
+            library_function(path, klass, function, args)
         else:
-            customFunction(function, args)
+            custom_function(function, args)
 
     def custom_function(function, args):
         function = dill.loads(function)
@@ -37,6 +38,8 @@ class DaemonApp:
 
 def main():
     with daemon.DaemonContext(
+        stdout=sys.stdout,
+        stderr=sys.stderr,
         pidfile=lockfile.FileLock("/tmp/etherfx_worker_daemon.pid")
     ):
         print(os.getuid())
