@@ -1,49 +1,49 @@
-from daemon import runner
+import core
+import daemon
 import dill
 import importlib
+import lockfile
 import time
-import core
 
-class Daemon():
+class DaemonApp():
     def __init__(self):
         self.stdin_path = '/dev/null'
         self.stdout_path = '/dev/tty'
         self.stderr_path = '/dev/tty'
-        self.pidfile_path =  '/tmp/foo.pid'
-        self.pidfile_timeout = 5
 
     def run(self):
         while True:
             pollRabbitMQ()
 
-    def performTask(TaskId):
+    def perform_task(TaskId):
         data = retrieveDataFromGDS(taskId)
         function = propfunction(data)
         exec(function)
 
-    def retrieveDataFromGDS(taskId):
+    def retrieve_data_from_GDS(taskId):
         core.datastore.getTask()
         # return path, klass, function, args
         # propFunction
 
-    def propfunction(path, klass, function, args):
+    def prop_function(path, klass, function, args):
         """Constructs a python function"""
         if function is None:
             libraryFunction(path, klass, function, args)
         else:
             customFunction(function, args)
 
-    def customFunction(function, args):
+    def custom_function(function, args):
         function = dill.loads(function)
 
-    def libraryFunction(module, function, args):
+    def library_function(module, function, args):
         function = importlib.import_module(module, function)
 
 def main():
-    daemon = Daemon()
-    daemon_runner = runner.DaemonRunner(daemon)
-    daemon_runner.do_action()
-    exit()
+    with daemon.DaemonContext(
+        pidfile = lockfile.FileLock('/tmp/etherfx_worker_daemon.pid')
+    ):
+        print(os.getuid())
+        print(os.getgid())
 
 if __name__ == '__main__':
     main()

@@ -6,7 +6,6 @@ import logging
 logging.basicConfig(level=logging.DEBUG)
 
 class Publisher():
-
     def __init__(self, driver):
         self.__driver = driver
         #need to change this payload once orchestrator is complete
