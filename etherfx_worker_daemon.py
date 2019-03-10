@@ -5,12 +5,8 @@ import importlib
 import lockfile
 import time
 
-class DaemonApp():
-    def __init__(self):
-        self.stdin_path = '/dev/null'
-        self.stdout_path = '/dev/tty'
-        self.stderr_path = '/dev/tty'
 
+class DaemonApp:
     def run(self):
         while True:
             pollRabbitMQ()
@@ -38,12 +34,14 @@ class DaemonApp():
     def library_function(module, function, args):
         function = importlib.import_module(module, function)
 
+
 def main():
     with daemon.DaemonContext(
-        pidfile = lockfile.FileLock('/tmp/etherfx_worker_daemon.pid')
+        pidfile=lockfile.FileLock("/tmp/etherfx_worker_daemon.pid")
     ):
         print(os.getuid())
         print(os.getgid())
 
-if __name__ == '__main__':
+
+if __name__ == "__main__":
     main()
