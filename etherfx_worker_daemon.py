@@ -31,30 +31,40 @@ class DaemonApp:
         return self.perform_task(json.loads(body))
 
     def perform_task(self, task_metadata):
-        print(task_metadata)
+        self.logger.debug("Received task metadata for task_id {}", task_metadata)
         function = self.prop_function(task_metadata["module"]+self.xstr(task_metadata["_class"]), task_metadata["function"])
-        if not function: return
+        if not function:
+            self.logger.debug("No function {}.{} for task_id: {}".format(
+                task_metadata["module"]+self.xstr(task_metadata["_class"]),
+                task_metadata["function"],
+                task_metadata["task_id"]
+            ))
+            return
 
-        arguments = gds.get_args_from_gds(task_metadata["task_id"])
-        if not arguments: return
+        arguments = self.gds.get_args_from_gds(task_metadata["task_id"])
+        if not arguments:
+            self.logger.debug("No args for task_id {}".format(task_metadata["task_id"]))
+            return
 
-        result = function(*(map(dill.loads, arguments)))
-        gds.set_result_in_gds(task_metadata["task_id"], dill.dumps(result))
+        deserialized_args = [dill.loads(x) for x in arguments]
+        result = function(*(deserialized_args))
+        self.gds.set_result_in_gds(task_metadata["task_id"], dill.dumps(result))
+        return result
 
     def prop_function(self, module, function):
-        """imports a Python function"""
         if not module: return
         if not function: return
 
         try:
             imported_module = importlib.import_module(module)
-            return get_attr(imported_module, function)
+            return getattr(imported_module, function)
         except ModuleNotFoundError as e:
+            self.logger.debug("No function {}.{}".format(module, function))
             return
         # else:
         #    custom_function(function, args)
 
-    def custom_function(function, args):
+    def custom_function(self, function, args):
         raise NotImplementedError
         # function = dill.loads(function)
 
