@@ -1,4 +1,3 @@
-import core
 import daemon
 import dill
 import importlib
@@ -6,34 +5,50 @@ import lockfile
 import os
 import sys
 import time
+from core.redis_interface import GDSClient
+from core.rabbitmq_interface import RabbitMQInterface
 
 class DaemonApp:
+    def __init__(self):
+        self.gds = GDSClient()
+        self.message_queue = RabbitMQInterface()
+
     def run(self):
-        while True:
-            poll_rabbit()
+        message_queue.subscribe_to_queue(callback)
 
-    def perform_task(TaskId):
-        data = retrieve_data_from_gds(taskId)
-        function = prop_function(data)
-        exec(function)
+    def callback(channel, method_frame, header_frame, body):
+        channel.basic_ack(delivery_tag=method_frame.delivery_tag)
+        return perform_task(body)
 
-    def retrieve_data_from_GDS(taskId):
-        core.datastore.getTask()
-        # return path, klass, function, args
-        # propFunction
+    def perform_task(task_metadata):
+        function = prop_function(task_metadata["module"]+xstr(task_metadata["_class"]), task_metadata["function"])
+        return if not function
 
-    def prop_function(path, klass, function, args):
-        """Constructs a python function"""
-        if function is None:
-            library_function(path, klass, function, args)
-        else:
-            custom_function(function, args)
+        arguments = gds.get_args_from_gds(task_metadata["task_id"])
+        return if not arguments
+
+        result = function(*(map(dill.loads, arguments)))
+        gds.set_result_in_gds(task_metadata["task_id"], dill.dumps(result))
+
+    def prop_function(module, function):
+        """imports a Python function"""
+        return if not module
+        return if not function
+
+        try:
+            imported_module = importlib.import_module(module)
+            return get_attr(imported_module, function)
+        except ModuleNotFoundError as e:
+            return
+        # else:
+        #    custom_function(function, args)
 
     def custom_function(function, args):
-        function = dill.loads(function)
+        raise NotImplementedError
+        # function = dill.loads(function)
 
-    def library_function(module, function, args):
-        function = importlib.import_module(module, function)
+    def xstr(s):
+        return '' if s is None else str(s)
 
 
 def main():
@@ -42,8 +57,8 @@ def main():
         stderr=sys.stderr,
         pidfile=lockfile.FileLock("/tmp/etherfx_worker_daemon.pid")
     ):
-        print(os.getuid())
-        print(os.getgid())
+        app = DaemonApp()
+        app.run()
 
 
 if __name__ == "__main__":
