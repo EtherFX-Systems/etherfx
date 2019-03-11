@@ -48,7 +48,7 @@ class DaemonApp:
         # function = dill.loads(function)
 
     def xstr(s):
-        return '' if s is None else str(s)
+        return '' if s is None else ("." + str(s))
 
 
 def main():
