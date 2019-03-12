@@ -1,0 +1,33 @@
+apiVersion: apps/v1
+kind: Deployment
+metadata:
+  name: orchestrator-worker
+  labels:
+    app: orchestrator-worker
+spec:
+  replicas: 1
+  selector:
+    matchLabels:
+      app: etherfx
+  template:
+    metadata:
+      labels:
+        app: etherfx
+    spec:
+      containers:
+      - name: etherfx-worker
+        image: gcr.io/groupify-201122/etherfx-worker:v3
+#         ports:
+#         - containerPort: 50051
+# ---
+# apiVersion: "v1"
+# kind: "Service"
+# metadata:
+#   name: orchestrator-service
+# spec: 
+#   ports:
+#   - port: 50051
+#     targetPort: 50051
+#   selector: 
+#     app: etherfx
+#   type: LoadBalancer

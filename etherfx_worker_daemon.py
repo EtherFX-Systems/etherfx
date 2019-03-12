@@ -1,8 +1,8 @@
-import daemon
+# import daemon
 import dill
 import importlib
 import json
-import lockfile
+# import lockfile
 import logging
 import os
 import sys
@@ -73,12 +73,12 @@ class DaemonApp:
 
 
 def main():
-    with daemon.DaemonContext(
-        stdout=sys.stdout,
-        stderr=sys.stderr
-    ):
-        app = DaemonApp(logging_enabled=True)
-        app.run()
+    # with daemon.DaemonContext(
+    #     stdout=sys.stdout,
+    #     stderr=sys.stderr
+    # ):
+    app = DaemonApp(logging_enabled=True)
+    app.run()
 
 
 if __name__ == "__main__":
