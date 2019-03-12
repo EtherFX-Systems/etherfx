@@ -47,7 +47,12 @@ class DaemonApp:
             return
 
         deserialized_args = [dill.loads(x) for x in arguments]
-        result = function(*(deserialized_args))
+
+        try:
+            result = function(*(deserialized_args))
+        except Exception as e:
+            result = e
+
         self.gds.set_result_in_gds(task_metadata["task_id"], dill.dumps(result))
         return result
 
