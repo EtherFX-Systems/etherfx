@@ -31,7 +31,8 @@ class DaemonApp:
         return self.perform_task(json.loads(body))
 
     def perform_task(self, task_metadata):
-        self.logger.debug("Received task metadata for task_id {}", task_metadata)
+        self.logger.debug("Received task metadata for task_id {}", task_metadata["task_id"])
+        # print(task_metadata)
         function = self.prop_function(task_metadata["module"]+self.xstr(task_metadata["_class"]), task_metadata["function"])
         if not function:
             self.logger.debug("No function {}.{} for task_id: {}".format(
@@ -53,7 +54,10 @@ class DaemonApp:
         except Exception as e:
             result = e
 
-        self.gds.set_result_in_gds(task_metadata["task_id"], dill.dumps(result))
+        self.logger.debug("Result: {}".format(result))
+        self.logger.debug("Serialized Result: ")
+        # print(dill.dumps(result))
+        self.gds.set_result_in_gds(task_metadata["task_id"], [dill.dumps(result)])
         return result
 
     def prop_function(self, module, function):
@@ -74,7 +78,10 @@ class DaemonApp:
         # function = dill.loads(function)
 
     def xstr(self, s):
-        return '' if s is None else ("." + str(s))
+        if s is None or s =='':
+            return ''
+        else:
+            return ("." + str(s))
 
 
 def main():
