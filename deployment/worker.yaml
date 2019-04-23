@@ -16,7 +16,7 @@ spec:
     spec:
       containers:
       - name: etherfx-worker
-        image: gcr.io/groupify-201122/etherfx-worker:v3
+        image: gcr.io/high-codex-238017/etherfx-worker:v3
 #         ports:
 #         - containerPort: 50051
 # ---
